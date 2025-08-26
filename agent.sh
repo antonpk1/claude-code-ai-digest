@@ -27,12 +27,14 @@ echo "━━━━━━━━━━━━━━━━━━━━━━━━�
 if [ "$WITH_VISUALIZATION" = "true" ]; then
     echo "📊 Visualization mode enabled"
     
-    PROMPT="Search for the latest AI developments from the last 24-48 hours. Focus on:
+    PROMPT="Search for AI developments that happened ONLY within the last 48 hours (no older content). Focus on:
 - Breaking AI news and announcements
 - New AI product launches and major updates
 - Important research papers or breakthroughs
 - Industry trends and analysis
 - Major company announcements (OpenAI, Anthropic, Google, Meta, etc.)
+
+IMPORTANT: Only include news/events/announcements from the last 48 hours. Do not include anything older.
 
 Then do the following:
 1. Create a structured digest and save it to ./result.md with:
@@ -56,7 +58,7 @@ Ensure all information includes source attribution and links."
     
     ALLOWED_TOOLS="WebSearch,Write,mcp__playwright__*"
 else
-    PROMPT="Search for the latest AI developments from the last 24-48 hours including breaking news, product launches, and research papers. Create a structured digest with bullet points and source links. Save it to ./result.md with title '# 🤖 AI Digest - [Today's Date]' and sections for different categories."
+    PROMPT="Search for AI developments that happened ONLY within the last 48 hours (no older content) including breaking news, product launches, and research papers. Create a structured digest with bullet points and source links. Save it to ./result.md with title '# 🤖 AI Digest - [Today's Date]' and sections for different categories."
     
     ALLOWED_TOOLS="WebSearch,Write"
 fi

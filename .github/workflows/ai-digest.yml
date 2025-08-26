@@ -107,8 +107,7 @@ jobs:
             const fs = require('fs');
             const digestContent = fs.readFileSync('result.md', 'utf8');
             const date = new Date().toISOString().split('T')[0];
-            const time = new Date().toTimeString().split(' ')[0];
-            const title = `🤖 AI Digest - ${date} at ${time}`;
+            const title = `🤖 AI Digest - ${date}`;
             
             let visualizationSection = '';
             const screenshotUrl = '${{ steps.screenshot.outputs.screenshot_url }}';

@@ -61,13 +61,9 @@ Gotchas: Don't forget to add the playwright mcp to the allowed_tools as 'mcp__pl
 So far we used haiku+weather task as a quick and cheap prompt while building.
 Since everything works end to end now - it's time to make the research more useful.
 
-Prompt 5) let's re-clarify our system from weather research and haiku to make a deep research in latest developments about AI. Update the prompts to find the most impactful latest AI news, products, papers. For the visual rendering, make a cool summary infographics, keep it concise and include photos/images when possible. The result issue should contain bullet points with links to sources and the visualisation screenshot. Rename the repository, workflow, files and update README accordingly - to not mention weather and haiku anymore.
+Prompt 5) let's re-clarify our system from weather research and haiku to make a deep research in latest developments about AI. Update the prompts to find the most impactful latest AI news, products, papers - all that happened within the last 48 hours only (!). For the visual rendering, make a cool summary infographics, keep it concise and include photos/images when possible. The result issue should contain bullet points with links to sources and the visualisation screenshot. Rename the repository, workflow, files and update README accordingly - to not mention weather and haiku anymore.
 
-
-
-
-Install github MCP
-
-Set up a long-lived authentication token (requires Claude subscription), so we don't pay for Claude API usage!
-$ claude setup-token
-Save the token in ./.env
+----
+Done, from now you can keep extending your agent with more  MCPs, guidance
+The full repository can be found here:
+...
