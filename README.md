@@ -2,6 +2,8 @@
 
 Automated AI news digest using Claude Code SDK and GitHub Actions.
 
+![System Architecture](diagram.png)
+
 ## Features
 
 - 🤖 Researches latest AI developments from multiple sources
