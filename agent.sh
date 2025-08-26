@@ -2,7 +2,7 @@
 
 # Claude Code SDK Agent Script - Weather Haiku Generator
 # This script uses Claude Code to check current London weather and write a haiku about it
-# Uses claude setup-token for authentication (requires Claude subscription)
+# Supports both local use and GitHub Actions workflow with optional visualization
 
 # Check if Claude Code is installed
 if ! command -v claude &> /dev/null; then
@@ -11,21 +11,55 @@ if ! command -v claude &> /dev/null; then
     exit 1
 fi
 
-# Check if Claude setup-token is configured
-# The token is stored in Claude's configuration after running 'claude setup-token'
-echo "ℹ️  Using Claude setup-token authentication (free with Claude subscription)"
-echo "   If not configured yet, run: claude setup-token"
+# Determine authentication method
+if [ -n "$CLAUDE_CODE_OAUTH_TOKEN" ]; then
+    echo "ℹ️  Using CLAUDE_CODE_OAUTH_TOKEN from environment"
+else
+    echo "ℹ️  Using Claude setup-token authentication (free with Claude subscription)"
+    echo "   If not configured yet, run: claude setup-token"
+fi
 
-# Generate a weather haiku using Claude Code with WebSearch and file editing capabilities
+# Generate a weather haiku using Claude Code
 echo "🌦️  Checking current weather in London and generating haiku..."
 echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
 
-# Run Claude Code with WebSearch and Write tools enabled
-# It will search for current weather in London and write a haiku to result.md
-claude --print "Search for the current weather in London, UK right now. Then write a beautiful haiku about the current weather conditions in London. Save the haiku to a file called ./result.md with a nice markdown format including a title '# London Weather Haiku' and today's date." \
-    --output-format text \
-    --allowedTools "WebSearch,Write" \
-    --permission-mode bypassPermissions
+# Build the prompt based on whether visualization is requested
+if [ "$WITH_VISUALIZATION" = "true" ]; then
+    echo "📊 Visualization mode enabled"
+    
+    PROMPT="Search for the current weather in London, UK including temperature, conditions, and forecast. 
+
+Then do the following:
+1. Create a beautiful haiku about the current weather and save it to ./result.md
+2. Create an HTML file at ./index.html with an awesome weather visualization using SVG. Include:
+   - A temperature chart showing current and forecasted temperatures
+   - Weather condition icons
+   - The haiku displayed beautifully
+   - Use inline styles and make it colorful and engaging
+   - Title it 'London Weather Report'
+3. Use Playwright MCP to navigate to file://\$PWD/index.html
+4. Take a screenshot and save it as ./weather-visualization.png
+
+Make sure the HTML has proper styling and the visualization is clean and informative."
+    
+    ALLOWED_TOOLS="WebSearch,Write,mcp__playwright__*"
+else
+    PROMPT="Search for the current weather in London, UK right now. Then write a beautiful haiku about the current weather conditions in London. Save the haiku to a file called ./result.md with a nice markdown format including a title '# London Weather Haiku' and today's date."
+    
+    ALLOWED_TOOLS="WebSearch,Write"
+fi
+
+# Build the Claude command
+CLAUDE_CMD="claude --print \"$PROMPT\" --output-format text --allowedTools \"$ALLOWED_TOOLS\" --permission-mode bypassPermissions"
+
+# Add MCP config if provided
+if [ -n "$MCP_CONFIG" ] && [ -f "$MCP_CONFIG" ]; then
+    echo "📋 Using MCP config: $MCP_CONFIG"
+    CLAUDE_CMD="$CLAUDE_CMD --mcp-config $MCP_CONFIG"
+fi
+
+# Execute the command
+eval $CLAUDE_CMD
 
 echo ""
 echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
