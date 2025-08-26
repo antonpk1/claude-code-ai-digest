@@ -2,3 +2,13 @@
 node_modules/
 .DS_Store
 result.md
+
+# Screenshots
+Screenshot*.png
+step1_haiku.png
+hello-world-from-file.png
+
+# Generated files
+index.html
+ai-digest-visualization.png
+weather-visualization.png
