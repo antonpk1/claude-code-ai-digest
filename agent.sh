@@ -44,7 +44,8 @@ Then do the following:
    - Keep it concise but informative
 
 2. Create an HTML file at ./index.html with a professional AI news infographic using SVG:
-   - Modern, clean design (720x480)
+   - Include tailwindcss using <script src="https://cdn.tailwindcss.com"></script>
+   - Modern, clean design (720x480). Make sure the content will fit well.
    - Highlight 3-5 key stories visually
    - Use icons/logos where appropriate (tech company logos, AI symbols)
    - Include a small data visualization if relevant (trend chart, comparison, etc.)
@@ -64,7 +65,7 @@ else
 fi
 
 # Build the Claude command
-CLAUDE_CMD="claude --print \"$PROMPT\" --output-format text --allowedTools \"$ALLOWED_TOOLS\" --permission-mode bypassPermissions"
+CLAUDE_CMD="claude --print \"$PROMPT\" --output-format text --allowedTools \"$ALLOWED_TOOLS\" --model opus --permission-mode bypassPermissions"
 
 # Add MCP config if provided
 if [ -n "$MCP_CONFIG" ] && [ -f "$MCP_CONFIG" ]; then
