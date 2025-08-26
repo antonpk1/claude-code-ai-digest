@@ -35,9 +35,11 @@ jobs:
         id: haiku
         run: |
           if [ -f result.md ]; then
-            echo "HAIKU_CONTENT<<EOF" >> $GITHUB_OUTPUT
-            cat result.md >> $GITHUB_OUTPUT
-            echo "EOF" >> $GITHUB_OUTPUT
+            {
+              echo 'HAIKU_CONTENT<<EOF'
+              cat result.md
+              echo 'EOF'
+            } >> $GITHUB_OUTPUT
           else
             echo "HAIKU_CONTENT=Failed to generate haiku" >> $GITHUB_OUTPUT
           fi
