@@ -6,7 +6,7 @@ on:
     - cron: '0 9 * * *'  # Daily at 9 AM UTC
 
 permissions:
-  contents: read
+  contents: write  # Need write permission to push screenshots
   issues: write
 
 jobs:
@@ -63,7 +63,38 @@ jobs:
             echo "haiku_exists=false" >> $GITHUB_OUTPUT
           fi
 
-      - name: Upload Visualization Screenshot
+      - name: Commit Screenshot to Repository
+        if: steps.haiku.outputs.haiku_exists == 'true' && hashFiles('weather-visualization.png') != ''
+        id: screenshot
+        run: |
+          DATE=$(date +%Y-%m-%d)
+          TIMESTAMP=$(date +%H-%M-%S)
+          FILENAME="screenshots/${DATE}-${TIMESTAMP}.png"
+          
+          # Configure git
+          git config --global user.name "github-actions[bot]"
+          git config --global user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          
+          # Create or checkout the weather-screenshots branch
+          git fetch origin weather-screenshots:weather-screenshots 2>/dev/null || git checkout -b weather-screenshots
+          git checkout weather-screenshots || git checkout -b weather-screenshots
+          
+          # Create screenshots directory if it doesn't exist
+          mkdir -p screenshots
+          
+          # Copy the screenshot with date-based name
+          cp weather-visualization.png "$FILENAME"
+          
+          # Commit and push
+          git add "$FILENAME"
+          git commit -m "Add weather visualization for ${DATE} at ${TIMESTAMP}"
+          git push origin weather-screenshots || git push --set-upstream origin weather-screenshots
+          
+          # Save the filename for the issue
+          echo "screenshot_url=https://raw.githubusercontent.com/${{ github.repository }}/weather-screenshots/${FILENAME}" >> $GITHUB_OUTPUT
+          echo "screenshot_path=${FILENAME}" >> $GITHUB_OUTPUT
+      
+      - name: Upload Visualization as Artifact (backup)
         if: steps.haiku.outputs.haiku_exists == 'true'
         uses: actions/upload-artifact@v4
         with:
@@ -90,17 +121,19 @@ jobs:
             const fs = require('fs');
             const haikuContent = fs.readFileSync('result.md', 'utf8');
             const date = new Date().toISOString().split('T')[0];
-            const title = `🌦️ Daily Weather Haiku - ${date}`;
+            const time = new Date().toTimeString().split(' ')[0];
+            const title = `🌦️ Daily Weather Haiku - ${date} at ${time}`;
             
             let visualizationSection = '';
-            if (fs.existsSync('weather-visualization.png')) {
+            const screenshotUrl = '${{ steps.screenshot.outputs.screenshot_url }}';
+            if (screenshotUrl && fs.existsSync('weather-visualization.png')) {
               visualizationSection = `
             
             ## 📊 Weather Visualization
             
-            [Download Weather Visualization](${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}#artifacts)
+            ![Weather Visualization](${screenshotUrl})
             
-            *Click the link above to view the weather visualization in the Artifacts section*`;
+            *Weather conditions and forecast for London*`;
             }
             
             const body = `${haikuContent}${visualizationSection}
@@ -110,34 +143,31 @@ jobs:
             
             [View Workflow Run](${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }})`;
             
-            // Search for existing issue with today's date
-            const issues = await github.rest.issues.listForRepo({
+            // Close any open daily-haiku issues first
+            const openIssues = await github.rest.issues.listForRepo({
               owner: context.repo.owner,
               repo: context.repo.repo,
               state: 'open',
               labels: 'daily-haiku',
-              per_page: 1
+              per_page: 100
             });
             
-            const todayIssue = issues.data.find(issue => issue.title.includes(date));
-            
-            if (todayIssue) {
-              // Update existing issue
+            for (const issue of openIssues.data) {
               await github.rest.issues.update({
                 owner: context.repo.owner,
                 repo: context.repo.repo,
-                issue_number: todayIssue.number,
-                body: body
+                issue_number: issue.number,
+                state: 'closed'
               });
-              console.log(`Updated issue #${todayIssue.number}`);
-            } else {
-              // Create new issue
-              const newIssue = await github.rest.issues.create({
-                owner: context.repo.owner,
-                repo: context.repo.repo,
-                title: title,
-                body: body,
-                labels: ['daily-haiku']
-              });
-              console.log(`Created issue #${newIssue.data.number}`);
+              console.log(`Closed previous issue #${issue.number}`);
             }
+            
+            // Always create a new issue
+            const newIssue = await github.rest.issues.create({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              title: title,
+              body: body,
+              labels: ['daily-haiku']
+            });
+            console.log(`Created new issue #${newIssue.data.number}`);
