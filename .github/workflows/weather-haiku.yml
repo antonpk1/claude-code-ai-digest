@@ -35,10 +35,11 @@ jobs:
         id: haiku
         run: |
           if [ -f result.md ]; then
+            DELIMITER=$(openssl rand -hex 16)
             {
-              echo 'HAIKU_CONTENT<<EOF'
+              echo "HAIKU_CONTENT<<$DELIMITER"
               cat result.md
-              echo 'EOF'
+              echo "$DELIMITER"
             } >> $GITHUB_OUTPUT
           else
             echo "HAIKU_CONTENT=Failed to generate haiku" >> $GITHUB_OUTPUT
