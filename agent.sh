@@ -1,7 +1,7 @@
 #!/bin/bash
 
-# Claude Code SDK Agent Script - Weather Haiku Generator
-# This script uses Claude Code to check current London weather and write a haiku about it
+# Claude Code SDK Agent Script - AI News Digest
+# This script uses Claude Code to research latest AI developments and create a digest
 # Supports both local use and GitHub Actions workflow with optional visualization
 
 # Check if Claude Code is installed
@@ -19,32 +19,44 @@ else
     echo "   If not configured yet, run: claude setup-token"
 fi
 
-# Generate a weather haiku using Claude Code
-echo "🌦️  Checking current weather in London and generating haiku..."
+# Generate an AI news digest using Claude Code
+echo "🤖  Researching latest AI developments and generating digest..."
 echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
 
 # Build the prompt based on whether visualization is requested
 if [ "$WITH_VISUALIZATION" = "true" ]; then
     echo "📊 Visualization mode enabled"
     
-    PROMPT="Search for the current weather in London, UK including temperature and conditions. 
+    PROMPT="Search for the latest AI developments from the last 24-48 hours. Focus on:
+- Breaking AI news and announcements
+- New AI product launches and major updates
+- Important research papers or breakthroughs
+- Industry trends and analysis
+- Major company announcements (OpenAI, Anthropic, Google, Meta, etc.)
 
 Then do the following:
-1. Create a beautiful haiku about the current weather and save it to ./result.md
-2. Create an HTML file at ./index.html with a simple, artistic daily poster using SVG. Design it as:
-   - A minimalist poster (720x480) with the haiku as the centerpiece
-   - Include today's weather (temperature and condition) in a compact, stylish way
-   - Use beautiful typography and colors that match the weather mood
-   - Keep it simple and poster-like, not a detailed infographic
-   - No charts or complex visualizations, just an artistic daily weather poster
-3. Use Playwright MCP to navigate to file://\$PWD/index.html
-4. Take a screenshot and save it as ./weather-visualization.png
+1. Create a structured digest and save it to ./result.md with:
+   - Title: '# 🤖 AI Digest - [Today's Date]'
+   - Sections: Latest Developments, Product Launches, Research Papers, Industry Trends
+   - Each item as a bullet point with source link
+   - Keep it concise but informative
 
-Make the design clean, artistic, and suitable for daily sharing."
+2. Create an HTML file at ./index.html with a professional AI news infographic using SVG:
+   - Modern, clean design (720x480)
+   - Highlight 3-5 key stories visually
+   - Use icons/logos where appropriate (tech company logos, AI symbols)
+   - Include a small data visualization if relevant (trend chart, comparison, etc.)
+   - Professional color scheme (blues, purples, teals)
+   - Title: 'AI Digest' with today's date
+
+3. Use Playwright MCP to navigate to file://\$PWD/index.html
+4. Take a screenshot and save it as ./ai-digest-visualization.png
+
+Ensure all information includes source attribution and links."
     
     ALLOWED_TOOLS="WebSearch,Write,mcp__playwright__*"
 else
-    PROMPT="Search for the current weather in London, UK right now. Then write a beautiful haiku about the current weather conditions in London. Save the haiku to a file called ./result.md with a nice markdown format including a title '# London Weather Haiku' and today's date."
+    PROMPT="Search for the latest AI developments from the last 24-48 hours including breaking news, product launches, and research papers. Create a structured digest with bullet points and source links. Save it to ./result.md with title '# 🤖 AI Digest - [Today's Date]' and sections for different categories."
     
     ALLOWED_TOOLS="WebSearch,Write"
 fi
@@ -63,7 +75,7 @@ eval $CLAUDE_CMD
 
 echo ""
 echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
-echo "✨ Weather haiku generated and saved to ./result.md!"
+echo "✨ AI digest generated and saved to ./result.md!"
 echo ""
 echo "📄 Content of result.md:"
 echo "------------------------"
