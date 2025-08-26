@@ -27,20 +27,20 @@ echo "━━━━━━━━━━━━━━━━━━━━━━━━�
 if [ "$WITH_VISUALIZATION" = "true" ]; then
     echo "📊 Visualization mode enabled"
     
-    PROMPT="Search for the current weather in London, UK including temperature, conditions, and forecast. 
+    PROMPT="Search for the current weather in London, UK including temperature and conditions. 
 
 Then do the following:
 1. Create a beautiful haiku about the current weather and save it to ./result.md
-2. Create an HTML file at ./index.html with an awesome weather visualization using SVG. Include:
-   - A temperature chart showing current and forecasted temperatures
-   - Weather condition icons
-   - The haiku displayed beautifully
-   - Use inline styles and make it colorful and engaging
-   - Title it 'London Weather Report'
+2. Create an HTML file at ./index.html with a simple, artistic daily poster using SVG. Design it as:
+   - A minimalist poster (720x480) with the haiku as the centerpiece
+   - Include today's weather (temperature and condition) in a compact, stylish way
+   - Use beautiful typography and colors that match the weather mood
+   - Keep it simple and poster-like, not a detailed infographic
+   - No charts or complex visualizations, just an artistic daily weather poster
 3. Use Playwright MCP to navigate to file://\$PWD/index.html
 4. Take a screenshot and save it as ./weather-visualization.png
 
-Make sure the HTML has proper styling and the visualization is clean and informative."
+Make the design clean, artistic, and suitable for daily sharing."
     
     ALLOWED_TOOLS="WebSearch,Write,mcp__playwright__*"
 else
