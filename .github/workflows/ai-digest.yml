@@ -1,9 +1,11 @@
 name: Generate AI Digest
 
 on:
-  workflow_dispatch:  # Manual trigger
-  schedule:
-    - cron: '0 9 * * *'  # Daily at 9 AM UTC
+  workflow_dispatch:  # Manual trigger only
+  
+  # To enable automatic daily runs, uncomment the lines below:
+  # schedule:
+  #   - cron: '0 9 * * *'  # Daily at 9 AM UTC
 
 permissions:
   contents: write  # Need write permission to push screenshots
